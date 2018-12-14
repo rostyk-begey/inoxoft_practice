@@ -11,7 +11,7 @@
  */
 namespace App\Users\Models;
 
-class User
+class User extends Model
 {
     /**
      * @var string
@@ -31,11 +31,28 @@ class User
      * @param string $lastName
      * @param string $email
      */
-    public function __construct(string $firstName,string $lastName,string $email)
+    public function __construct(string $firstName,string $lastName,string $email, string $password)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
+        $this->password = $password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param string $password
+     */
+    public function setPassword(string $password)
+    {
+        $this->password = $password;
     }
 
     /**
@@ -86,6 +103,8 @@ class User
         $this->email = $email;
     }
 
-
+    public static function getTableName(): string{
+        return "users";
+    }
 
 }
