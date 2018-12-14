@@ -9,6 +9,8 @@
 namespace App\Users\Models\Repositories;
 use App\Users\Models\ModelInterface;
 use App\Users\Models\User;
+use App\Core\Database\DB;
+use \PDO;
 /**
  * Class AbstractRepository
  */
@@ -19,15 +21,15 @@ abstract class AbstractRepository
     public function save(ModelInterface $model){
         $table = $model->getTableName();
         $columns = implode(",", $model->getColumnList());
-        $values = implode(",", $model->getValuesList());
+        $values = implode("','", $model->getValueList());
         $sql = "
         INSERT INTO {$table} (
           {$columns}
         ) VALUES (
-          {$values}
+          '{$values}'
         )
         ";
-
+        echo $sql;
         try {
             $conn = DB::getConnection();
             // set the PDO error mode to exception
@@ -39,7 +41,8 @@ abstract class AbstractRepository
         }
         catch(PDOException $e)
         {
-            echo $sql . "<br>" . $e->getMessage();
+            //echo $sql . "<br>" . $e->getMessage();
+            echo $sql;
         }
 
         //return
