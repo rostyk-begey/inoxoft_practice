@@ -39,7 +39,7 @@ abstract class Model implements ModelInterface
     }
 
 
-    abstract public static function getTableName(): string;
+    abstract public function getTableName(): string;
 
     /**
      * @param $data

@@ -16,7 +16,6 @@ use App\Users\Models\Repositories\UserRepository;
 
 class UsersController extends ControllerAbstract
 {
-
     private $repository;
     /**
      * UsersController constructor.
@@ -73,9 +72,13 @@ class UsersController extends ControllerAbstract
         $email = $_POST['email'];
         $pass = $_POST['password'];
 
-        $user = new User($first_name,$last_name,$last_name, $last_name);
+        $user = new User($first_name,$last_name,$email, $pass);
+        $_SESSION['user'] = $user;
         $user->setData($_POST);
+
+
         print_r($user->getData());
+        echo "<br/>";
 
 
         //$sql = "INSERT INTO users (first_name, last_name, email, password) VALUES ('{$first_name}', '{$last_name}', '{$email}', '{$pass}')";
@@ -98,5 +101,8 @@ class UsersController extends ControllerAbstract
         $path = dirname(dirname(__FILE__)).'/view/login.php';
         $sp = DIRECTORY_SEPARATOR;
         include(str_replace(array('/','\\'),$sp,$path));
+    }
+    public function delete(){
+        $this->repository->remove($_SESSION['user']);
     }
 }

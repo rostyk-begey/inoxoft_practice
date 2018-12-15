@@ -103,7 +103,7 @@ class User extends Model
         $this->email = $email;
     }
 
-    public static function getTableName(): string{
+    public function getTableName(): string{
         return "users";
     }
 

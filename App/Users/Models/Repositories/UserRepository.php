@@ -20,7 +20,4 @@ class UserRepository extends AbstractRepository
     public static function load(int $id): User{
 
     }
-    public static function remove(){
-
-    }
 }

@@ -29,7 +29,7 @@ abstract class AbstractRepository
           '{$values}'
         )
         ";
-        echo $sql;
+        //echo $sql;
         try {
             $conn = DB::getConnection();
             // set the PDO error mode to exception
@@ -41,10 +41,30 @@ abstract class AbstractRepository
         }
         catch(PDOException $e)
         {
-            //echo $sql . "<br>" . $e->getMessage();
-            echo $sql;
+            echo $sql . "<br>" . $e->getMessage();
         }
 
-        //return
+    }
+
+
+    public function remove(ModelInterface $model){
+        $table = $model->getTableName();
+        $email = $model->getEmail();
+        $sql = "DELETE FROM {$table} WHERE (email = {$email})";
+        //echo $sql;
+        try {
+            $conn = DB::getConnection();
+            // set the PDO error mode to exception
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // use exec() because no results are returned
+            $conn->exec($sql);
+            echo "User deleted successfully";
+        }
+        catch(PDOException $e)
+        {
+            echo $sql . "<br>" . $e->getMessage();
+        }
+
     }
 }
