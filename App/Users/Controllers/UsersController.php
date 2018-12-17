@@ -9,13 +9,14 @@
 namespace App\Users\Controllers;
 
 use App\Core\Controllers\ControllerAbstract;
-use App\Core\Database\DB;
 use \PDO;
+use App\Core\Database\DB;
 use App\Users\Models\User;
 use App\Users\Models\Repositories\UserRepository;
 
 class UsersController extends ControllerAbstract
 {
+    private $user;
     private $repository;
     /**
      * UsersController constructor.
@@ -36,23 +37,27 @@ class UsersController extends ControllerAbstract
         $password = "root";
         $dbname = "inoxoft_practice";
 
+
+
         // Create connection
         try {
             $email = $_POST['email'];
             $pass = $_POST['password'];
 
 
-            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $conn = DB::getConnection();
             // set the PDO error mode to exception
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "SELECT password FROM users WHERE email = {$email}";
-            // use exec() because no results are returned
-            $stmt = $conn->query($sql);
-            $row =$stmt->fetchObject();
-            if($pass == $result->password){
-                echo "Logined successfully";
+
+            $sql = "SELECT * FROM users WHERE email = '{$email}'";
+            $result = $conn->query($sql);
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+            //strcmp($original['password'], 'string');
+
+            if($pass == $result['password']){
+                echo "Login successfully  \n"."Hello: '{$result['first_name']}' '{$result['last_name']}}'";
             }else {
-                echo "Login failed";
+                echo "Login failed!\nCheck entered login and password";//\n{$pass}\n{$result['password']}";
             }
 
         }
@@ -66,18 +71,25 @@ class UsersController extends ControllerAbstract
     public function save()
     {
         //print_r( $_POST);
-
         $first_name = $_POST['first_name'];
         $last_name = $_POST['last_name'];
         $email = $_POST['email'];
         $pass = $_POST['password'];
 
         $user = new User($first_name,$last_name,$email, $pass);
-        $_SESSION['user'] = $user;
+        $this->user = $user;
+        //$_COOKIE['user_table'] = $user->getTableName();
         $user->setData($_POST);
 
+        setcookie('user_table', $user->getTableName(), time()+36000, "/", "localhost", 0);
+        setcookie('user_email', $user->getEmail(), time()+36000, "/", "localhost", 0);
 
         print_r($user->getData());
+
+        $_SESSION['user_table'] = $user->getTableName();
+        $_SESSION['user_email'] = $user->getEmail();
+
+        echo $_SESSION['user_table'];
         echo "<br/>";
 
 
@@ -103,6 +115,8 @@ class UsersController extends ControllerAbstract
         include(str_replace(array('/','\\'),$sp,$path));
     }
     public function delete(){
-        $this->repository->remove($_SESSION['user']);
+        //$user = $_COOKIE['user'];//  $_SESSION['user'];
+        //print_r($user->getData());
+        $this->repository->remove($_SESSION['user_table'],$_SESSION['user_email']);
     }
 }

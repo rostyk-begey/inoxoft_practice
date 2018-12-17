@@ -47,9 +47,9 @@ abstract class AbstractRepository
     }
 
 
-    public function remove(ModelInterface $model){
-        $table = $model->getTableName();
-        $email = $model->getEmail();
+    public function remove($table, $email){
+        //$table = $model->getTableName();
+        //$email = $model->getEmail();
         $sql = "DELETE FROM {$table} WHERE (email = {$email})";
         //echo $sql;
         try {

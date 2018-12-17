@@ -50,9 +50,11 @@ abstract class Model implements ModelInterface
         foreach ($data as $k=>$v){
             //echo "{$k}($v)";
 
-            $methodName = str_replace('-', '', ucwords($k, '-'));
+            $methodName = "set".str_replace('-', '', ucwords($k, '-'));
             if(method_exists($this,$methodName)){
-                $this->data[$methodName] = $v;
+                //echo "{data[$methodName]} = {$v}";
+                //$this->data[$methodName] = $v;
+                $this->$methodName($v);
             }
         }
     }

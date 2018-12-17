@@ -20,7 +20,7 @@
 </head>
 <body>
 <div class="wrapper">
-    <form action="<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/?module=users&action=save'; ?>" method="POST">
+    <form class="form-signin" action="<?php echo 'http://'.$_SERVER['SERVER_NAME'].'/?module=users&action=save'; ?>" method="POST">
         <h2 class="form-signin-heading">Please login</h2>
         <input type="text" class="form-control" name="first_name" placeholder="First Name" required="" autofocus="" />
         <input type="text" class="form-control" name="last_name" placeholder="Last Name" required="" autofocus="" />
