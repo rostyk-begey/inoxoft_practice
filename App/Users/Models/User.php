@@ -14,6 +14,10 @@ namespace App\Users\Models;
 class User extends Model
 {
     /**
+     * @var int
+     */
+    private $id;
+    /**
      * @var string
      */
     private $firstName;
@@ -26,17 +30,41 @@ class User extends Model
      */
     private $email;
     /**
+     * @var string
+     */
+    private $password;
+
+    /**
      * User constructor.
+     * @param int $id
      * @param string $firstName
      * @param string $lastName
      * @param string $email
+     * @param string $password
      */
-    public function __construct(string $firstName,string $lastName,string $email, string $password)
+    /*public function __construct(int $id, string $firstName,string $lastName,string $email, string $password)
     {
+        $this->id = $id;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
         $this->password = $password;
+    }*/
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id)
+    {
+        $this->id = $id;
     }
 
     /**
@@ -58,7 +86,7 @@ class User extends Model
     /**
      * @return string
      */
-    public function getFirstName(): string
+    public function getFirstName()
     {
         return $this->firstName;
     }
@@ -74,7 +102,7 @@ class User extends Model
     /**
      * @return string
      */
-    public function getLastName(): string
+    public function getLastName()
     {
         return $this->lastName;
     }
@@ -90,7 +118,7 @@ class User extends Model
     /**
      * @return string
      */
-    public function getEmail(): string
+    public function getEmail()
     {
         return $this->email;
     }
@@ -103,7 +131,8 @@ class User extends Model
         $this->email = $email;
     }
 
-    public function getTableName(): string{
+    public static function getTableName()
+    {
         return "users";
     }
 

@@ -14,15 +14,5 @@ interface ModelInterface
     /**
      * @return array
      */
-    public function getColumnList(): array;
-
-    /**
-     * @return array
-     */
-    public function getValueList(): array;
-
-    /**
-     * @return array
-     */
     public function getData(): array;
 }

@@ -13,21 +13,6 @@ abstract class Model implements ModelInterface
 {
 
     protected $data = [];
-    /**
-     * @return array
-     */
-    public function getColumnList(): array
-    {
-        return array_keys($this->getData());
-    }
-
-    /**
-     * @return array
-     */
-    public function getValueList(): array
-    {
-        return array_values($this->getData());
-    }
 
     /**
      * @return array
@@ -39,7 +24,7 @@ abstract class Model implements ModelInterface
     }
 
 
-    abstract public function getTableName(): string;
+    abstract public static function getTableName();
 
     /**
      * @param $data
@@ -50,7 +35,7 @@ abstract class Model implements ModelInterface
         foreach ($data as $k=>$v){
             //echo "{$k}($v)";
 
-            $methodName = "set".str_replace('-', '', ucwords($k, '-'));
+            $methodName = "set".str_replace('_', '', ucwords($k, '-'));
             if(method_exists($this,$methodName)){
                 //echo "{data[$methodName]} = {$v}";
                 //$this->data[$methodName] = $v;

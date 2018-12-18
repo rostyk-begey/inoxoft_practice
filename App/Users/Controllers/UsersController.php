@@ -23,7 +23,7 @@ class UsersController extends ControllerAbstract
      */
     public function __construct()
     {
-        $this->repository = new UserRepository();
+        $this->repository = new UserRepository("User");
     }
 
     public function index()
@@ -55,7 +55,7 @@ class UsersController extends ControllerAbstract
             //strcmp($original['password'], 'string');
 
             if($pass == $result['password']){
-                echo "Login successfully  \n"."Hello: '{$result['first_name']}' '{$result['last_name']}}'";
+                echo "Login successfully  \n"."Hello: '{$result['first_name']}' '{$result['last_name']}'";
             }else {
                 echo "Login failed!\nCheck entered login and password";//\n{$pass}\n{$result['password']}";
             }
@@ -81,13 +81,13 @@ class UsersController extends ControllerAbstract
         //$_COOKIE['user_table'] = $user->getTableName();
         $user->setData($_POST);
 
-        setcookie('user_table', $user->getTableName(), time()+36000, "/", "localhost", 0);
-        setcookie('user_email', $user->getEmail(), time()+36000, "/", "localhost", 0);
+        //setcookie('user_table', $user->getTableName(), time()+36000, "/", "localhost", 0);
+        //setcookie('user_email', $user->getEmail(), time()+36000, "/", "localhost", 0);
 
         print_r($user->getData());
 
-        $_SESSION['user_table'] = $user->getTableName();
-        $_SESSION['user_email'] = $user->getEmail();
+        //$_SESSION['user_table'] = $user->getTableName();
+        //$_SESSION['user_email'] = $user->getEmail();
 
         echo $_SESSION['user_table'];
         echo "<br/>";
@@ -118,5 +118,21 @@ class UsersController extends ControllerAbstract
         //$user = $_COOKIE['user'];//  $_SESSION['user'];
         //print_r($user->getData());
         $this->repository->remove($_SESSION['user_table'],$_SESSION['user_email']);
+    }
+
+    public function list(){
+        $users = $this->repository->list();
+        $link = 'http://'.$_SERVER['SERVER_NAME'].'/?module=users&action=find&id=';
+
+        $path = dirname(dirname(__FILE__)).'/view/list.php';
+        $sp = DIRECTORY_SEPARATOR;
+        include(str_replace(array('/','\\'),$sp,$path));
+    }
+    public function find(){
+        $users = [$this->repository->find($_GET['id'])];
+
+        $path = dirname(dirname(__FILE__)).'/view/list.php';
+        $sp = DIRECTORY_SEPARATOR;
+        include(str_replace(array('/','\\'),$sp,$path));
     }
 }
