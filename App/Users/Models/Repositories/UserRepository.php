@@ -14,7 +14,5 @@ use App\Users\Models\Repositories\AbstractRepository;
 
 class UserRepository extends AbstractRepository
 {
-    public static function load(int $id): User{
 
-    }
 }

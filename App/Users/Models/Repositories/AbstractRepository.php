@@ -11,7 +11,7 @@ use App\Users\Models\ModelInterface;
 use App\Users\Models\Model;
 use App\Users\Models\User;
 use App\Core\Database\DB;
-use \PDO;
+
 /**
  * Class AbstractRepository
  */
@@ -28,7 +28,6 @@ abstract class AbstractRepository
     {
         $this->modelInstance = 'App\\'.ucfirst($model).'s\\Models\\'.ucfirst($model);
     }
-
 
     /**
      * @param ModelInterface $model
@@ -48,7 +47,9 @@ abstract class AbstractRepository
         return array_values($model->getData());
     }
 
-
+    /**
+     * @param ModelInterface $model
+     */
     public function save(ModelInterface $model){
         $table = $model::getTableName();
         $columns = implode(",", $this->getColumnList($model));
@@ -77,11 +78,18 @@ abstract class AbstractRepository
 
     }
 
+    /**
+     * @param ModelInterface $model
+     */
+    public function remove(ModelInterface $model){
+        $table = $model->getTableName();
+        $data = $model->getData();
+        $clause = "";
+        foreach($data as $k => $v){
+            $clause .= " {$k} = '{$v}'";
+        }
 
-    public function remove($table, $email){
-        //$table = $model->getTableName();
-        //$email = $model->getEmail();
-        $sql = "DELETE FROM {$table} WHERE (email = {$email})";
+        $sql = "DELETE FROM {$table} WHERE {$clause}";
         //echo $sql;
         try {
             $conn = DB::getConnection();
@@ -99,6 +107,9 @@ abstract class AbstractRepository
 
     }
 
+    /**
+     * @return array
+     */
     public function list(){
 
         $table = $this->modelInstance::getTableName();
@@ -134,14 +145,18 @@ abstract class AbstractRepository
 
         return $models;
     }
-    public function find($id){
+
+    /**
+     * @param $pk
+     * @param $pv
+     * @return ModelInterface
+     */
+    public function find($pk,$pv){
 
         $table = $this->modelInstance::getTableName();
 
 
-        $sql = "
-        SELECT * FROM {$table} WHERE id = {$id}
-        ";
+        $sql = "   SELECT * FROM {$table} WHERE {$pk} = '{$pv}'  ";
 
         $model = null;
 
@@ -150,16 +165,10 @@ abstract class AbstractRepository
             // set the PDO error mode to exception
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            // use exec() because no results are returned
-            //$conn->exec($sql);
-            foreach ($conn->query($sql) as $row) {
-                //$link = 'http://'.$_SERVER['SERVER_NAME'].'/?module=users&action=find&id=';
-                //$action = $link . $row['id'];
 
+            foreach ($conn->query($sql) as $row) {
                 $model = new $this->modelInstance();
                 $model->setData($row);
-                var_dump($row);
-
             }
 
         }

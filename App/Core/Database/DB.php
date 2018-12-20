@@ -34,9 +34,13 @@ final class DB
         }
 
     }
+
+    /**
+     * @return PDO
+     */
     public static function getConnection()
     {
-        if (null === self::$pdo) {
+        if (self::$pdo === null) {
             $conStr=sprintf("mysql:host=%s;dbname=%s", self::DB_HOST,self::DB_NAME);
             self::$pdo = new PDO($conStr, self::DB_USER, self::DB_PASSWORD);
         }

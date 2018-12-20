@@ -16,7 +16,7 @@ use App\Users\Models\Repositories\UserRepository;
 
 class UsersController extends ControllerAbstract
 {
-    private $user;
+    private static $user;
     private $repository;
     /**
      * UsersController constructor.
@@ -39,34 +39,25 @@ class UsersController extends ControllerAbstract
 
 
 
-        // Create connection
-        try {
-            $email = $_POST['email'];
-            $pass = $_POST['password'];
+        $email = $_POST['email'];
+        $pass = $_POST['password'];
+        $user = $this->repository->find('email',$email);
 
-
-            $conn = DB::getConnection();
-            // set the PDO error mode to exception
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $sql = "SELECT * FROM users WHERE email = '{$email}'";
-            $result = $conn->query($sql);
-            $result = $result->fetch(PDO::FETCH_ASSOC);
-            //strcmp($original['password'], 'string');
-
-            if($pass == $result['password']){
-                echo "Login successfully  \n"."Hello: '{$result['first_name']}' '{$result['last_name']}'";
-            }else {
-                echo "Login failed!\nCheck entered login and password";//\n{$pass}\n{$result['password']}";
-            }
-
+        echo "<pre>";
+        //print_r($user);
+        echo "</pre>";
+        if($pass == $user->getPassword()){
+            echo "Login successfully";// \n"."Hello: '{$user['first_name']}' '{$result['last_name']}'";
+        }else {
+            echo "Login failed!\nCheck entered login and password";//\n{$pass}\n{$result['password']}";
         }
-        catch(PDOException $e)
-        {
-            echo $sql . "<br>" . $e->getMessage();
-        }
+        $users = [$user];
+        $link = 'http://'.$_SERVER['SERVER_NAME'].'/?module=users&action=find&id=';
 
-        $conn = null;
+        $path = dirname(dirname(__FILE__)).'/view/list.php';
+        $sp = DIRECTORY_SEPARATOR;
+        include(str_replace(array('/','\\'),$sp,$path));
+
     }
     public function save()
     {
@@ -76,18 +67,19 @@ class UsersController extends ControllerAbstract
         $email = $_POST['email'];
         $pass = $_POST['password'];
 
-        $user = new User($first_name,$last_name,$email, $pass);
-        $this->user = $user;
+        $user = new User();
+        self::$user = $user;
         //$_COOKIE['user_table'] = $user->getTableName();
         $user->setData($_POST);
 
         //setcookie('user_table', $user->getTableName(), time()+36000, "/", "localhost", 0);
         //setcookie('user_email', $user->getEmail(), time()+36000, "/", "localhost", 0);
-
+        echo "<pre>";
         print_r($user->getData());
+        echo "</pre>";
 
-        //$_SESSION['user_table'] = $user->getTableName();
-        //$_SESSION['user_email'] = $user->getEmail();
+        $_SESSION['user_table'] = $user->getTableName();
+        $_SESSION['user_email'] = $user->getEmail();
 
         echo $_SESSION['user_table'];
         echo "<br/>";
@@ -102,7 +94,6 @@ class UsersController extends ControllerAbstract
     {
         //print_r($_SERVER['HTTP_HOST']);
         //print_r(dirname(dirname(__FILE__)));
-        //echo phpinfo();
         $path = dirname(dirname(__FILE__)).'/view/register.php';
         $sp = DIRECTORY_SEPARATOR;
         include(str_replace(array('/','\\'),$sp,$path));
@@ -117,9 +108,9 @@ class UsersController extends ControllerAbstract
     public function delete(){
         //$user = $_COOKIE['user'];//  $_SESSION['user'];
         //print_r($user->getData());
-        $this->repository->remove($_SESSION['user_table'],$_SESSION['user_email']);
+        //$this->repository->remove($_SESSION['user_table'],$_SESSION['user_email']);
+        $this->repository->remove(self::$user);
     }
-
     public function list(){
         $users = $this->repository->list();
         $link = 'http://'.$_SERVER['SERVER_NAME'].'/?module=users&action=find&id=';
@@ -129,7 +120,7 @@ class UsersController extends ControllerAbstract
         include(str_replace(array('/','\\'),$sp,$path));
     }
     public function find(){
-        $users = [$this->repository->find($_GET['id'])];
+        $users = [$this->repository->find('id',$_GET['id'])];
 
         $path = dirname(dirname(__FILE__)).'/view/list.php';
         $sp = DIRECTORY_SEPARATOR;
